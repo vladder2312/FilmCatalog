@@ -1,6 +1,7 @@
 package ru.vladder2312.filmcatalog.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -38,14 +39,18 @@ class AppModule(private val context: Context) {
     }
 
     @Provides
-    @Singleton
     fun provideMovieService(): MovieService {
         return provideRetrofit().create(MovieService::class.java)
     }
 
     @Provides
-    @Singleton
     fun provideMovieRepository(): MovieRepository {
-        return MovieRepository(provideMovieService())
+        return MovieRepository(provideMovieService(), provideSharedPreferences())
+    }
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(): SharedPreferences {
+        return context.getSharedPreferences("Favourites", Context.MODE_PRIVATE)
     }
 }
