@@ -22,4 +22,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun getMovies() {
         movieRepository.getMovies()
     }
+
+    fun searchMovies(text: String) {
+        movieRepository.searchMovies(text)
+    }
 }
