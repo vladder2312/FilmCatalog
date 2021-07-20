@@ -27,6 +27,6 @@ data class MovieResponse(
     @SerializedName("vote_average") val voteAverage: Float
 ) {
     fun transform() : Movie {
-        return Movie(id, title, overview, releaseDate, backdropPath, false)
+        return Movie(id, title, overview, releaseDate, posterPath, false)
     }
 }

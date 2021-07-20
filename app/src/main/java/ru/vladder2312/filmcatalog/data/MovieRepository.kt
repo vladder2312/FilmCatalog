@@ -30,4 +30,23 @@ class MovieRepository @Inject constructor(
                 }
             )
     }
+
+    fun searchMovies(text: String) {
+        val disposable = movieService.searchMovies(text)
+            .map {
+                it.results.map { m ->
+                    m.transform()
+                }
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    response.postValue(it)
+                },
+                {
+                    Log.e("MYTAG", it.toString())
+                }
+            )
+    }
 }
