@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'kotlin-android-extensions'
 }
 
 android {
@@ -45,9 +46,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.5.21"
 
     //Retrofit
-    implementation 'com.squareup.okhttp3:okhttp:2.8.5'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.3.1'
-    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.2'
 
@@ -60,8 +61,6 @@ dependencies {
     //Rx
     implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    // implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
-    // implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
 
     //Dagger
     implementation 'com.google.dagger:dagger:2.24'
@@ -69,4 +68,7 @@ dependencies {
 
     //CardView
     implementation 'androidx.cardview:cardview:1.0.0'
+
+    //EasyAdapter
+    implementation 'ru.surfstudio.android:easyadapter:1.0.0'
 }
