@@ -12,7 +12,7 @@ import ru.vladder2312.filmcatalog.domain.Movie
 
 class MoviesController(
     private val onClickListener: (Movie) -> Unit,
-    private val onLikeClickListener: (Boolean) -> Unit
+    private val onLikeClickListener: (Movie) -> Unit
 ) : BindableItemController<Movie, MoviesController.MovieHolder>() {
 
     inner class MovieHolder(parent: ViewGroup) :
@@ -29,7 +29,7 @@ class MoviesController(
             card.setOnClickListener { onClickListener(movie) }
             like.setOnClickListener {
                 movie.isFavourite = !movie.isFavourite
-                onLikeClickListener(movie.isFavourite)
+                onLikeClickListener(movie)
                 setLikeIcon()
             }
         }

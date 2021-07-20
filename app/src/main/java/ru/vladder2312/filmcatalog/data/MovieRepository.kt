@@ -1,5 +1,6 @@
 package ru.vladder2312.filmcatalog.data
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -8,7 +9,8 @@ import ru.vladder2312.filmcatalog.domain.Movie
 import javax.inject.Inject
 
 class MovieRepository @Inject constructor(
-    private val movieService: MovieService
+    private val movieService: MovieService,
+    private val sharedPreferences: SharedPreferences
 ) {
     val response = MutableLiveData<List<Movie>>()
 
@@ -17,6 +19,14 @@ class MovieRepository @Inject constructor(
             .map {
                 it.results.map { m ->
                     m.transform()
+                }
+            }
+            .map {
+                it.map { m ->
+                    if (sharedPreferences.getBoolean(m.id.toString(), false)) {
+                        m.isFavourite = true
+                    }
+                    m
                 }
             }
             .subscribeOn(Schedulers.io())
@@ -36,6 +46,14 @@ class MovieRepository @Inject constructor(
             .map {
                 it.results.map { m ->
                     m.transform()
+                }
+            }
+            .map {
+                it.map { m ->
+                    if (sharedPreferences.getBoolean(m.id.toString(), false)) {
+                        m.isFavourite = true
+                    }
+                    m
                 }
             }
             .subscribeOn(Schedulers.io())
