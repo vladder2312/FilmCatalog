@@ -1,6 +1,5 @@
 package ru.vladder2312.filmcatalog.ui
 
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,7 +11,8 @@ import ru.vladder2312.filmcatalog.R
 import ru.vladder2312.filmcatalog.domain.Movie
 
 class MoviesController(
-    private val onClickListener: (Movie) -> Unit
+    private val onClickListener: (Movie) -> Unit,
+    private val onLikeClickListener: (Boolean) -> Unit
 ) : BindableItemController<Movie, MoviesController.MovieHolder>() {
 
     inner class MovieHolder(parent: ViewGroup) :
@@ -27,6 +27,11 @@ class MoviesController(
 
         init {
             card.setOnClickListener { onClickListener(movie) }
+            like.setOnClickListener {
+                movie.isFavourite = !movie.isFavourite
+                onLikeClickListener(movie.isFavourite)
+                setLikeIcon()
+            }
         }
 
         override fun bind(data: Movie) {
@@ -34,11 +39,17 @@ class MoviesController(
             title.text = movie.title
             overview.text = movie.overview
             release.text = movie.releaseDate
-            if (movie.isFavourite) {
-                like.setImageResource(R.drawable.ic_like_checked)
-            }
+            setLikeIcon()
             if (movie.cover != null) {
                 Picasso.get().load("https://image.tmdb.org/t/p/w780"+movie.cover).into(image)
+            }
+        }
+
+        private fun setLikeIcon() {
+            if(movie.isFavourite) {
+                like.setImageResource(R.drawable.ic_like_checked)
+            } else {
+                like.setImageResource(R.drawable.ic_like)
             }
         }
     }

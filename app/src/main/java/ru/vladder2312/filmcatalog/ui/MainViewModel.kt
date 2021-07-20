@@ -26,4 +26,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun searchMovies(text: String) {
         movieRepository.searchMovies(text)
     }
+
+    fun saveLikeState(isFavourite: Boolean) {
+
+    }
 }

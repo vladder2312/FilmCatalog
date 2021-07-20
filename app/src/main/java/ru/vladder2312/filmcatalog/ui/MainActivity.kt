@@ -21,9 +21,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mainViewModel: MainViewModel
     private val movieAdapter = EasyAdapter()
-    private val movieController = MoviesController {
-        Toast.makeText(this, it.title, Toast.LENGTH_LONG).show()
-    }
+    private val movieController = MoviesController(
+        {
+            Toast.makeText(this, it.title, Toast.LENGTH_LONG).show()
+        },
+        {
+            mainViewModel.saveLikeState(it)
+        }
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,12 +61,13 @@ class MainActivity : AppCompatActivity() {
             .debounce(250, TimeUnit.MILLISECONDS)
             .distinct()
             .subscribe {
-            mainViewModel.searchMovies(it)
-        }
+                mainViewModel.searchMovies(it)
+            }
     }
 
     private fun initRecycler() {
-        recycler_movie.layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+        recycler_movie.layoutManager =
+            StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recycler_movie.adapter = movieAdapter
     }
 
