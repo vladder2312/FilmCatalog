@@ -1,6 +1,7 @@
 package ru.vladder2312.filmcatalog.data
 
 import com.google.gson.annotations.SerializedName
+import ru.vladder2312.filmcatalog.domain.Movie
 
 data class MoviesResponse(
     @SerializedName("page") val page: Int,
@@ -24,4 +25,8 @@ data class MovieResponse(
     @SerializedName("vote_count") val voteCount: Int,
     @SerializedName("video") val video: Boolean,
     @SerializedName("vote_average") val voteAverage: Float
-)
+) {
+    fun transform() : Movie {
+        return Movie(id, title, overview, releaseDate, backdropPath, false)
+    }
+}
