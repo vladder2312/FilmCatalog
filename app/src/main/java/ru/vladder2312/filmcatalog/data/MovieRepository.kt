@@ -1,10 +1,13 @@
 package ru.vladder2312.filmcatalog.data
 
+import android.content.Context
 import android.content.SharedPreferences
+import android.provider.Settings.Global.getString
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import ru.vladder2312.filmcatalog.R
 import ru.vladder2312.filmcatalog.domain.Movie
 import javax.inject.Inject
 
@@ -13,6 +16,7 @@ class MovieRepository @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) {
     val response = MutableLiveData<List<Movie>>()
+    val errorMessage = MutableLiveData<String>()
 
     fun getMovies() {
         val disposable = movieService.getMovies()
@@ -36,7 +40,7 @@ class MovieRepository @Inject constructor(
                     response.postValue(it)
                 },
                 {
-                    Log.e("MYTAG", it.toString())
+                    errorMessage.postValue(it.localizedMessage)
                 }
             )
     }
@@ -63,7 +67,7 @@ class MovieRepository @Inject constructor(
                     response.postValue(it)
                 },
                 {
-                    Log.e("MYTAG", it.toString())
+                    errorMessage.postValue(it.localizedMessage)
                 }
             )
     }

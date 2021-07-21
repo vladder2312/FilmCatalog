@@ -16,10 +16,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
     val data : MutableLiveData<List<Movie>>
+    val errorMessage : MutableLiveData<String>
 
     init {
         App.appComponent.inject(this)
         data = movieRepository.response
+        errorMessage = movieRepository.errorMessage
     }
 
     fun getMovies() {

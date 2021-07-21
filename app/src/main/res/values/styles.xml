@@ -4,5 +4,7 @@
     <style name="SearchViewStyle" parent="Widget.AppCompat.Light.SearchView">
         <item name="android:textSize">15sp</item>
         <item name="fontFamily">sans-serif</item>
+        <item name="android:textColorHint">@color/hintColor</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 </resources>

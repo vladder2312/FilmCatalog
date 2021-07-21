@@ -26,8 +26,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:iconifiedByDefault="false"
-            android:queryHint="@string/search_hint"
-            app:searchIcon="@drawable/ic_search" />
+            android:background="@color/white"
+            android:searchIcon="@drawable/ic_search"
+            android:closeIcon="@drawable/ic_close"
+            android:queryHint="@string/search_hint" />
 
     </androidx.cardview.widget.CardView>
 
@@ -38,7 +40,7 @@
         android:layout_marginTop="8dp"
         android:indeterminate="true"
         android:visibility="invisible"
-        app:indicatorColor="#004FFF"
+        app:indicatorColor="@color/blue"
         app:layout_constraintTop_toBottomOf="@id/search_card_view" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -70,7 +72,7 @@
         android:layout_height="0dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progress_indicator">
+        app:layout_constraintTop_toTopOf="@+id/swipe_refresh">
 
         <ImageView
             android:id="@+id/imageView"
@@ -95,8 +97,55 @@
             android:textColor="#B4B4B4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
-            tools:text="По запросу ничего не найдено" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/query_error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/swipe_refresh">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_alert_triangle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.45"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/query_error_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="34dp"
+            android:layout_marginEnd="60dp"
+            android:textAlignment="center"
+            android:textColor="#B4B4B4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+        <ImageButton
+            android:id="@+id/refresh_button"
+            android:layout_width="56dp"
+            android:layout_height="62dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_refresh"
+            android:background="@color/background"
+            app:elevation="6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="ContentDescription" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,8 @@ import android.view.View
 import android.view.animation.Animation
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,22 +37,21 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+        swipe_refresh.setColorSchemeColors(ContextCompat.getColor(this, R.color.blue))
+
         mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         initRecycler()
         initSearchView()
+        getData()
         observeData()
 
-        mainViewModel.getMovies()
-        progress_indicator.visibility = View.VISIBLE
-
         swipe_refresh.setOnRefreshListener {
-            if(search_view.query.isNotEmpty()){
-                mainViewModel.searchMovies(search_view.query.toString())
-            } else {
-                mainViewModel.getMovies()
-            }
-            progress_indicator.visibility = View.VISIBLE
+            getData()
+        }
+        refresh_button.setOnClickListener {
+            getData()
         }
     }
 
@@ -82,17 +83,34 @@ class MainActivity : AppCompatActivity() {
         recycler_movie.adapter = movieAdapter
     }
 
+    private fun getData() {
+        if (search_view.query.isNotEmpty()) {
+            mainViewModel.searchMovies(search_view.query.toString())
+        } else {
+            mainViewModel.getMovies()
+        }
+        progress_indicator.visibility = View.VISIBLE
+    }
+
     private fun observeData() {
         mainViewModel.data.observe(this) {
             movieAdapter.setData(it, movieController)
             swipe_refresh.isRefreshing = false
             progress_indicator.visibility = View.INVISIBLE
-            if(it.isEmpty()) {
+            query_error_layout.visibility = View.INVISIBLE
+            if (it.isEmpty()) {
                 not_found_layout.visibility = View.VISIBLE
                 not_found_text.text = "По запросу \"${search_view.query}\" ничего не найдено"
             } else {
                 not_found_layout.visibility = View.INVISIBLE
             }
+        }
+        mainViewModel.errorMessage.observe(this) {
+            movieAdapter.setData(listOf(), movieController)
+            swipe_refresh.isRefreshing = false
+            progress_indicator.visibility = View.INVISIBLE
+            query_error_layout.visibility = View.VISIBLE
+            query_error_text.text = getString(R.string.query_error)
         }
     }
 }

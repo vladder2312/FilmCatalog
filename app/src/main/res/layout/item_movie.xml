@@ -5,12 +5,13 @@
     android:id="@+id/item_movie"
     android:layout_width="match_parent"
     android:layout_height="183dp"
-    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
     app:cardCornerRadius="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/movie_cover"
@@ -47,6 +48,7 @@
             android:layout_marginEnd="12dp"
             android:minHeight="90dp"
             android:textSize="14sp"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/movie_cover"
             app:layout_constraintTop_toBottomOf="@+id/movie_title"
@@ -70,6 +72,7 @@
             android:layout_marginStart="7dp"
             android:layout_marginBottom="16dp"
             android:textSize="16sp"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/date_icon"
             tools:text="1 января 2017" />
