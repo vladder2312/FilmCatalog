@@ -9,6 +9,7 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -49,9 +50,11 @@ class MainActivity : AppCompatActivity() {
 
         swipe_refresh.setOnRefreshListener {
             getData()
+            progress_indicator.visibility = View.VISIBLE
         }
         refresh_button.setOnClickListener {
             getData()
+            progress_indicator.visibility = View.VISIBLE
         }
     }
 
@@ -89,7 +92,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             mainViewModel.getMovies()
         }
-        progress_indicator.visibility = View.VISIBLE
     }
 
     private fun observeData() {
@@ -97,6 +99,7 @@ class MainActivity : AppCompatActivity() {
             movieAdapter.setData(it, movieController)
             swipe_refresh.isRefreshing = false
             progress_indicator.visibility = View.INVISIBLE
+            progress_bar.visibility = View.INVISIBLE
             query_error_layout.visibility = View.INVISIBLE
             if (it.isEmpty()) {
                 not_found_layout.visibility = View.VISIBLE
@@ -109,6 +112,7 @@ class MainActivity : AppCompatActivity() {
             movieAdapter.setData(listOf(), movieController)
             swipe_refresh.isRefreshing = false
             progress_indicator.visibility = View.INVISIBLE
+            progress_bar.visibility = View.INVISIBLE
             query_error_layout.visibility = View.VISIBLE
             query_error_text.text = getString(R.string.query_error)
         }
