@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.functions.Predicate
@@ -54,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         }
         refresh_button.setOnClickListener {
             getData()
+            refresh_button.visibility = View.INVISIBLE
             progress_indicator.visibility = View.VISIBLE
         }
     }
@@ -97,10 +99,11 @@ class MainActivity : AppCompatActivity() {
     private fun observeData() {
         mainViewModel.data.observe(this) {
             movieAdapter.setData(it, movieController)
-            swipe_refresh.isRefreshing = false
+            refresh_button.visibility = View.VISIBLE
             progress_indicator.visibility = View.INVISIBLE
             progress_bar.visibility = View.INVISIBLE
             query_error_layout.visibility = View.INVISIBLE
+            swipe_refresh.isRefreshing = false
             if (it.isEmpty()) {
                 not_found_layout.visibility = View.VISIBLE
                 not_found_text.text = "По запросу \"${search_view.query}\" ничего не найдено"
@@ -109,12 +112,22 @@ class MainActivity : AppCompatActivity() {
             }
         }
         mainViewModel.errorMessage.observe(this) {
-            movieAdapter.setData(listOf(), movieController)
-            swipe_refresh.isRefreshing = false
+            //movieAdapter.setData(listOf(), movieController)
+            if (movieAdapter.itemCount == 0) {
+                query_error_layout.visibility = View.VISIBLE
+                query_error_text.text = getString(R.string.query_error)
+            } else {
+                query_error_layout.visibility = View.INVISIBLE
+            }
+            refresh_button.visibility = View.VISIBLE
             progress_indicator.visibility = View.INVISIBLE
             progress_bar.visibility = View.INVISIBLE
-            query_error_layout.visibility = View.VISIBLE
-            query_error_text.text = getString(R.string.query_error)
+            swipe_refresh.isRefreshing = false
+            showSnackBar(getString(R.string.connection_error))
         }
+    }
+
+    private fun showSnackBar(string: String) {
+        Snackbar.make(main_view, string, Snackbar.LENGTH_SHORT).show()
     }
 }
