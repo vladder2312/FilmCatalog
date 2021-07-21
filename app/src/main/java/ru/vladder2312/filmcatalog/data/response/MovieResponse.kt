@@ -1,14 +1,7 @@
-package ru.vladder2312.filmcatalog.data
+package ru.vladder2312.filmcatalog.data.response
 
 import com.google.gson.annotations.SerializedName
 import ru.vladder2312.filmcatalog.domain.Movie
-
-data class MoviesResponse(
-    @SerializedName("page") val page: Int,
-    @SerializedName("results") val results: List<MovieResponse>,
-    @SerializedName("total_results") val totalResults: Int,
-    @SerializedName("total_pages") val totalPages: Int
-)
 
 data class MovieResponse(
     @SerializedName("poster_path") val posterPath: String?,
