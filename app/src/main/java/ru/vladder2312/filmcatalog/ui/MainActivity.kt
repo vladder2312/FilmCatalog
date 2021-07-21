@@ -3,6 +3,8 @@ package ru.vladder2312.filmcatalog.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.animation.Animation
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -40,10 +42,15 @@ class MainActivity : AppCompatActivity() {
         observeData()
 
         mainViewModel.getMovies()
+        progress_indicator.visibility = View.VISIBLE
 
         swipe_refresh.setOnRefreshListener {
-            search_view.setQuery("", false)
-            mainViewModel.getMovies()
+            if(search_view.query.isNotEmpty()){
+                mainViewModel.searchMovies(search_view.query.toString())
+            } else {
+                mainViewModel.getMovies()
+            }
+            progress_indicator.visibility = View.VISIBLE
         }
     }
 
@@ -63,8 +70,7 @@ class MainActivity : AppCompatActivity() {
             })
         })
             .filter { it.isNotEmpty() }
-            .debounce(250, TimeUnit.MILLISECONDS)
-            .distinct()
+            .debounce(200, TimeUnit.MILLISECONDS)
             .subscribe {
                 mainViewModel.searchMovies(it)
             }
@@ -80,6 +86,7 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.data.observe(this) {
             movieAdapter.setData(it, movieController)
             swipe_refresh.isRefreshing = false
+            progress_indicator.visibility = View.INVISIBLE
         }
     }
 }
