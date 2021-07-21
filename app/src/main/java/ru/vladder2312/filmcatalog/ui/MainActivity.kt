@@ -92,11 +92,8 @@ class MainActivity : AppCompatActivity() {
     private fun observeData() {
         mainViewModel.data.observe(this) {
             movieAdapter.setData(it, movieController)
-            refresh_button.visibility = View.VISIBLE
-            progress_indicator.visibility = View.INVISIBLE
-            progress_bar.visibility = View.INVISIBLE
+            hideLoadingBars()
             query_error_layout.visibility = View.INVISIBLE
-            swipe_refresh.isRefreshing = false
             if (it.isEmpty()) {
                 not_found_layout.visibility = View.VISIBLE
                 not_found_text.text = "По запросу \"${search_view.query}\" ничего не найдено"
@@ -111,12 +108,16 @@ class MainActivity : AppCompatActivity() {
             } else {
                 query_error_layout.visibility = View.INVISIBLE
             }
-            refresh_button.visibility = View.VISIBLE
-            progress_indicator.visibility = View.INVISIBLE
-            progress_bar.visibility = View.INVISIBLE
-            swipe_refresh.isRefreshing = false
+            hideLoadingBars()
             showSnackBar(getString(R.string.connection_error))
         }
+    }
+
+    private fun hideLoadingBars() {
+        refresh_button.visibility = View.VISIBLE
+        progress_indicator.visibility = View.INVISIBLE
+        progress_bar.visibility = View.INVISIBLE
+        swipe_refresh.isRefreshing = false
     }
 
     private fun showSnackBar(string: String) {
