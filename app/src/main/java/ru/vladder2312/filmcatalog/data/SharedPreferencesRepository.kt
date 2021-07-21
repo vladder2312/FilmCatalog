@@ -1,9 +1,11 @@
 package ru.vladder2312.filmcatalog.data
 
-import android.content.Context
 import android.content.SharedPreferences
 import javax.inject.Inject
 
+/**
+ * Репозиторий внутренней памяти устройства
+ */
 class SharedPreferencesRepository @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) {

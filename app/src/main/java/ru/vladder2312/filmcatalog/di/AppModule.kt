@@ -14,6 +14,9 @@ import ru.vladder2312.filmcatalog.data.MovieService
 import ru.vladder2312.filmcatalog.data.SharedPreferencesRepository
 import javax.inject.Singleton
 
+/**
+ * Модуль приложения
+ */
 @Module
 class AppModule(private val context: Context) {
 

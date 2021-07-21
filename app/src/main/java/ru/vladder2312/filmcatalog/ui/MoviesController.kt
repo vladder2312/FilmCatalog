@@ -10,6 +10,9 @@ import ru.surfstudio.android.easyadapter.holder.BindableViewHolder
 import ru.vladder2312.filmcatalog.R
 import ru.vladder2312.filmcatalog.domain.Movie
 
+/**
+ * Контроллер списка фильмов
+ */
 class MoviesController(
     private val onClickListener: (Movie) -> Unit,
     private val onLikeClickListener: (Movie) -> Unit

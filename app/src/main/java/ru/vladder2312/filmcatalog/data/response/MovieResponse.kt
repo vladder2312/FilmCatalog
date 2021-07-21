@@ -3,6 +3,9 @@ package ru.vladder2312.filmcatalog.data.response
 import com.google.gson.annotations.SerializedName
 import ru.vladder2312.filmcatalog.domain.Movie
 
+/**
+ * Класс Фильм, получаемый с API
+ */
 data class MovieResponse(
     @SerializedName("poster_path") val posterPath: String?,
     @SerializedName("adult") val adult: Boolean,

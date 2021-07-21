@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -13,8 +14,12 @@ import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.surfstudio.android.easyadapter.EasyAdapter
 import ru.vladder2312.filmcatalog.R
+import ru.vladder2312.filmcatalog.domain.Movie
 import java.util.concurrent.TimeUnit
 
+/**
+ * Главная активность приложения
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
@@ -27,6 +32,17 @@ class MainActivity : AppCompatActivity() {
             viewModel.saveLikeState(it)
         }
     )
+    private val moviesObserver = Observer<List<Movie>> {
+        movieAdapter.setData(it, movieController)
+        hideLoadingBars()
+        query_error_layout.visibility = View.INVISIBLE
+        if (it.isEmpty()) {
+            not_found_layout.visibility = View.VISIBLE
+            not_found_text.text = getString(R.string.not_found, search_view.query)
+        } else {
+            not_found_layout.visibility = View.INVISIBLE
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,22 +102,13 @@ class MainActivity : AppCompatActivity() {
         if (search_view.query.isNotEmpty()) {
             viewModel.searchMovies(search_view.query.toString())
         } else {
-            viewModel.getMovies()
+            viewModel.loadMovies()
         }
     }
 
     private fun observeData() {
-        viewModel.movies.observe(this) {
-            movieAdapter.setData(it, movieController)
-            hideLoadingBars()
-            query_error_layout.visibility = View.INVISIBLE
-            if (it.isEmpty()) {
-                not_found_layout.visibility = View.VISIBLE
-                not_found_text.text = "По запросу \"${search_view.query}\" ничего не найдено"
-            } else {
-                not_found_layout.visibility = View.INVISIBLE
-            }
-        }
+        viewModel.movies.observe(this, moviesObserver)
+        viewModel.foundMovies.observe(this, moviesObserver)
         viewModel.errorMessage.observe(this) {
             if (movieAdapter.itemCount == 0) {
                 query_error_layout.visibility = View.VISIBLE

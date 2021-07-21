@@ -5,25 +5,32 @@ import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import ru.vladder2312.filmcatalog.App
 import ru.vladder2312.filmcatalog.data.MovieRepository
 import ru.vladder2312.filmcatalog.domain.Movie
 import javax.inject.Inject
 
+/**
+ * Модель главного представления
+ */
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     @Inject lateinit var movieRepository: MovieRepository
     @Inject lateinit var sharedPreferences: SharedPreferences
     val movies = MutableLiveData<List<Movie>>()
+    val foundMovies = MutableLiveData<List<Movie>>()
     val errorMessage = MutableLiveData<String>()
+    lateinit var loadDisposable : Disposable
+    lateinit var searchDisposable : Disposable
 
     init {
         App.appComponent.inject(this)
     }
 
-    fun getMovies() {
-        val disposable = movieRepository.getMovies()
+    fun loadMovies() {
+        loadDisposable = movieRepository.getMovies()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -37,12 +44,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun searchMovies(text: String) {
-        val disposable = movieRepository.searchMovies(text)
+        searchDisposable = movieRepository.searchMovies(text)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    movies.postValue(it)
+                    foundMovies.postValue(it)
                 },
                 {
                     errorMessage.postValue(it.localizedMessage)
@@ -57,5 +64,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         } else {
             sharedPreferences.edit().remove(movie.id.toString()).apply()
         }
+    }
+
+    override fun onCleared() {
+        loadDisposable.dispose()
+        searchDisposable.dispose()
+        super.onCleared()
     }
 }
