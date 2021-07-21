@@ -1,10 +1,5 @@
 package ru.vladder2312.filmcatalog.data
 
-import android.content.SharedPreferences
-import androidx.lifecycle.MutableLiveData
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import ru.vladder2312.filmcatalog.domain.Movie
 import javax.inject.Inject
 
 class MovieRepository @Inject constructor(

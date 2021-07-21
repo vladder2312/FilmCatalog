@@ -3,4 +3,5 @@
     <string name="search_hint">Поиск по названию фильма</string>
     <string name="connection_error">Проверьте соединение с интернетом и попробуйте ещё раз</string>
     <string name="query_error">Нам не удалось обработать ваш запрос. Попробуйте ещё раз</string>
+    <string name="not_found">По запросу \"%1$s\" ничего не найдено</string>
 </resources>

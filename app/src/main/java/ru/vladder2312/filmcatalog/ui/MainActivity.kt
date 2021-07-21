@@ -97,7 +97,8 @@ class MainActivity : AppCompatActivity() {
             query_error_layout.visibility = View.INVISIBLE
             if (it.isEmpty()) {
                 not_found_layout.visibility = View.VISIBLE
-                not_found_text.text = "По запросу \"${search_view.query}\" ничего не найдено"
+                not_found_text.text = getString(R.string.not_found, search_view.query)
+//                "По запросу \"${search_view.query}\" ничего не найдено"
             } else {
                 not_found_layout.visibility = View.INVISIBLE
             }
