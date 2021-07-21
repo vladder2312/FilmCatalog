@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
-import io.reactivex.ObservableOnSubscribe
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.surfstudio.android.easyadapter.EasyAdapter
 import ru.vladder2312.filmcatalog.R
@@ -18,43 +17,45 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var mainViewModel: MainViewModel
+    private lateinit var viewModel: MainViewModel
     private val movieAdapter = EasyAdapter()
     private val movieController = MoviesController(
         {
             Toast.makeText(this, it.title, Toast.LENGTH_LONG).show()
         },
         {
-            mainViewModel.saveLikeState(it)
+            viewModel.saveLikeState(it)
         }
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        window.statusBarColor = ContextCompat.getColor(this, R.color.black)
-        swipe_refresh.setColorSchemeColors(ContextCompat.getColor(this, R.color.blue))
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
-        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
-
+        initViews()
         initRecycler()
         initSearchView()
-        getData()
+        initData()
         observeData()
+    }
 
+    private fun initViews() {
+        window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+        swipe_refresh.setColorSchemeColors(ContextCompat.getColor(this, R.color.blue))
         swipe_refresh.setOnRefreshListener {
-            getData()
+            initData()
             progress_indicator.visibility = View.VISIBLE
         }
         refresh_button.setOnClickListener {
-            getData()
+            initData()
             refresh_button.visibility = View.INVISIBLE
             progress_indicator.visibility = View.VISIBLE
         }
     }
 
     private fun initSearchView() {
-        val obs = Observable.create(ObservableOnSubscribe<String> {
+        val disposable = Observable.create<String> {
             search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     it.onNext(query!!)
@@ -67,11 +68,11 @@ class MainActivity : AppCompatActivity() {
                 }
 
             })
-        })
+        }
             .filter { it.isNotEmpty() }
             .debounce(200, TimeUnit.MILLISECONDS)
             .subscribe {
-                mainViewModel.searchMovies(it)
+                viewModel.searchMovies(it)
             }
     }
 
@@ -81,16 +82,16 @@ class MainActivity : AppCompatActivity() {
         recycler_movie.adapter = movieAdapter
     }
 
-    private fun getData() {
+    private fun initData() {
         if (search_view.query.isNotEmpty()) {
-            mainViewModel.searchMovies(search_view.query.toString())
+            viewModel.searchMovies(search_view.query.toString())
         } else {
-            mainViewModel.getMovies()
+            viewModel.getMovies()
         }
     }
 
     private fun observeData() {
-        mainViewModel.data.observe(this) {
+        viewModel.movies.observe(this) {
             movieAdapter.setData(it, movieController)
             hideLoadingBars()
             query_error_layout.visibility = View.INVISIBLE
@@ -101,7 +102,7 @@ class MainActivity : AppCompatActivity() {
                 not_found_layout.visibility = View.INVISIBLE
             }
         }
-        mainViewModel.errorMessage.observe(this) {
+        viewModel.errorMessage.observe(this) {
             if (movieAdapter.itemCount == 0) {
                 query_error_layout.visibility = View.VISIBLE
                 query_error_text.text = getString(R.string.query_error)
