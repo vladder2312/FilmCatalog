@@ -16,8 +16,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/progress_indicator"
-        />
+        app:layout_constraintTop_toTopOf="@+id/progress_indicator" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/search_card_view"
@@ -45,15 +44,16 @@
 
     </androidx.cardview.widget.CardView>
 
-    <com.google.android.material.progressindicator.LinearProgressIndicator
+    <ProgressBar
         android:id="@+id/progress_indicator"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:indeterminate="true"
+        android:indeterminateTint="@color/blue"
         android:visibility="invisible"
-        app:indicatorColor="@color/blue"
-        app:layout_constraintTop_toBottomOf="@id/search_card_view" />
+        app:layout_constraintTop_toBottomOf="@+id/search_card_view" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
