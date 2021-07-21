@@ -1,13 +1,9 @@
 package ru.vladder2312.filmcatalog.data
 
-import android.content.Context
 import android.content.SharedPreferences
-import android.provider.Settings.Global.getString
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import ru.vladder2312.filmcatalog.R
 import ru.vladder2312.filmcatalog.domain.Movie
 import javax.inject.Inject
 
@@ -15,29 +11,29 @@ class MovieRepository @Inject constructor(
     private val movieService: MovieService,
     private val sharedPreferences: SharedPreferences
 ) {
-    val response = MutableLiveData<List<Movie>>()
+    val movies = MutableLiveData<List<Movie>>()
     val errorMessage = MutableLiveData<String>()
 
     fun getMovies() {
         val disposable = movieService.getMovies()
-            .map {
-                it.results.map { m ->
-                    m.transform()
+            .map { movies ->
+                movies.results.map { movie ->
+                    movie.transform()
                 }
             }
-            .map {
-                it.map { m ->
-                    if (sharedPreferences.getBoolean(m.id.toString(), false)) {
-                        m.isFavourite = true
+            .map { movies ->
+                movies.map { movie ->
+                    if (sharedPreferences.getBoolean(movie.id.toString(), false)) {
+                        movie.isFavourite = true
                     }
-                    m
+                    movie
                 }
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    response.postValue(it)
+                    movies.postValue(it)
                 },
                 {
                     errorMessage.postValue(it.localizedMessage)
@@ -64,7 +60,7 @@ class MovieRepository @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    response.postValue(it)
+                    movies.postValue(it)
                 },
                 {
                     errorMessage.postValue(it.localizedMessage)

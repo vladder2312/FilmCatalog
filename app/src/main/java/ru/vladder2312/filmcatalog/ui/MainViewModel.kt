@@ -11,17 +11,14 @@ import javax.inject.Inject
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    @Inject
-    lateinit var movieRepository: MovieRepository
-
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-    val data: MutableLiveData<List<Movie>>
+    @Inject lateinit var movieRepository: MovieRepository
+    @Inject lateinit var sharedPreferences: SharedPreferences
+    val movies: MutableLiveData<List<Movie>>
     val errorMessage: MutableLiveData<String>
 
     init {
         App.appComponent.inject(this)
-        data = movieRepository.response
+        movies = movieRepository.movies
         errorMessage = movieRepository.errorMessage
     }
 
