@@ -2,7 +2,6 @@ package ru.vladder2312.filmcatalog.data
 
 import io.reactivex.Single
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.Query
 
 interface MovieService {

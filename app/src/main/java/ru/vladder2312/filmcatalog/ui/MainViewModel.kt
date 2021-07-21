@@ -13,10 +13,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     @Inject
     lateinit var movieRepository: MovieRepository
+
     @Inject
     lateinit var sharedPreferences: SharedPreferences
-    val data : MutableLiveData<List<Movie>>
-    val errorMessage : MutableLiveData<String>
+    val data: MutableLiveData<List<Movie>>
+    val errorMessage: MutableLiveData<String>
 
     init {
         App.appComponent.inject(this)
@@ -33,7 +34,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun saveLikeState(movie: Movie) {
-        if(movie.isFavourite) {
+        if (movie.isFavourite) {
             sharedPreferences.edit().putBoolean(movie.id.toString(), movie.isFavourite).apply()
         } else {
             sharedPreferences.edit().remove(movie.id.toString()).apply()

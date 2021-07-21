@@ -2,22 +2,15 @@ package ru.vladder2312.filmcatalog.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.view.animation.Animation
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
-import io.reactivex.functions.Predicate
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.surfstudio.android.easyadapter.EasyAdapter
 import ru.vladder2312.filmcatalog.R
@@ -112,7 +105,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         mainViewModel.errorMessage.observe(this) {
-            //movieAdapter.setData(listOf(), movieController)
             if (movieAdapter.itemCount == 0) {
                 query_error_layout.visibility = View.VISIBLE
                 query_error_text.text = getString(R.string.query_error)
