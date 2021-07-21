@@ -87,6 +87,12 @@ class MainActivity : AppCompatActivity() {
             movieAdapter.setData(it, movieController)
             swipe_refresh.isRefreshing = false
             progress_indicator.visibility = View.INVISIBLE
+            if(it.isEmpty()) {
+                not_found_layout.visibility = View.VISIBLE
+                not_found_text.text = "По запросу \"${search_view.query}\" ничего не найдено"
+            } else {
+                not_found_layout.visibility = View.INVISIBLE
+            }
         }
     }
 }
