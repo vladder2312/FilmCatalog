@@ -41,12 +41,12 @@ class MoviesController(
             release.text = movie.releaseDate
             setLikeIcon()
             if (movie.cover != null) {
-                Picasso.get().load("https://image.tmdb.org/t/p/w780"+movie.cover).into(image)
+                Picasso.get().load("https://image.tmdb.org/t/p/w780" + movie.cover).into(image)
             }
         }
 
         private fun setLikeIcon() {
-            if(movie.isFavourite) {
+            if (movie.isFavourite) {
                 like.setImageResource(R.drawable.ic_like_checked)
             } else {
                 like.setImageResource(R.drawable.ic_like)
