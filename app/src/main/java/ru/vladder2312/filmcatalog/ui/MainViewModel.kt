@@ -11,6 +11,9 @@ import ru.vladder2312.filmcatalog.data.MovieRepository
 import ru.vladder2312.filmcatalog.domain.Movie
 import javax.inject.Inject
 
+/**
+ * Модель главного представления
+ */
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     @Inject lateinit var movieRepository: MovieRepository

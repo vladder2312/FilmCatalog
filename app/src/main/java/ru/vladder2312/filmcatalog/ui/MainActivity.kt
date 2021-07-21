@@ -15,6 +15,9 @@ import ru.surfstudio.android.easyadapter.EasyAdapter
 import ru.vladder2312.filmcatalog.R
 import java.util.concurrent.TimeUnit
 
+/**
+ * Главная активность приложения
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel

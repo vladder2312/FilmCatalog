@@ -8,6 +8,9 @@ import ru.vladder2312.filmcatalog.di.AppComponent
 import ru.vladder2312.filmcatalog.di.AppModule
 import ru.vladder2312.filmcatalog.di.DaggerAppComponent
 
+/**
+ * Класс инициализации приложения
+ */
 class App : Application() {
 
     companion object {

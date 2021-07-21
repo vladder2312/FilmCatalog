@@ -5,6 +5,9 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import ru.vladder2312.filmcatalog.data.response.MoviesResponse
 
+/**
+ * Сервис для получения фильмов
+ */
 interface MovieService {
 
     @GET("discover/movie")

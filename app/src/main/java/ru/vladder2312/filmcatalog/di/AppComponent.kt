@@ -7,6 +7,9 @@ import ru.vladder2312.filmcatalog.data.MovieRepository
 import ru.vladder2312.filmcatalog.ui.MainViewModel
 import javax.inject.Singleton
 
+/**
+ * Компонент приложения
+ */
 @Singleton
 @Component(modules = [AppModule::class])
 interface AppComponent {
