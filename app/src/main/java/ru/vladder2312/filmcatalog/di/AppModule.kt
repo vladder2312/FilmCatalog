@@ -11,6 +11,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.vladder2312.filmcatalog.data.MovieRepository
 import ru.vladder2312.filmcatalog.data.MovieService
+import ru.vladder2312.filmcatalog.data.SharedPreferencesRepository
 import javax.inject.Singleton
 
 @Module
@@ -39,18 +40,26 @@ class AppModule(private val context: Context) {
     }
 
     @Provides
+    @Singleton
     fun provideMovieService(): MovieService {
         return provideRetrofit().create(MovieService::class.java)
     }
 
     @Provides
+    @Singleton
     fun provideMovieRepository(): MovieRepository {
-        return MovieRepository(provideMovieService(), provideSharedPreferences())
+        return MovieRepository(provideMovieService(), provideSharedPreferencesRepository())
     }
 
     @Provides
     @Singleton
     fun provideSharedPreferences(): SharedPreferences {
         return context.getSharedPreferences("Favourites", Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferencesRepository(): SharedPreferencesRepository {
+        return SharedPreferencesRepository(provideSharedPreferences())
     }
 }
