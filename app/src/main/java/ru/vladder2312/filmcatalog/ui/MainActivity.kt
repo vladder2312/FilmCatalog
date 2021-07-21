@@ -40,6 +40,11 @@ class MainActivity : AppCompatActivity() {
         observeData()
 
         mainViewModel.getMovies()
+
+        swipe_refresh.setOnRefreshListener {
+            search_view.setQuery("", false)
+            mainViewModel.getMovies()
+        }
     }
 
     private fun initSearchView() {
@@ -74,6 +79,7 @@ class MainActivity : AppCompatActivity() {
     private fun observeData() {
         mainViewModel.data.observe(this) {
             movieAdapter.setData(it, movieController)
+            swipe_refresh.isRefreshing = false
         }
     }
 }
