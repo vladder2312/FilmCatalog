@@ -43,6 +43,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             not_found_layout.visibility = View.INVISIBLE
         }
     }
+    private val errorsObserver = Observer<String> {
+        if (movieAdapter.itemCount == 0) {
+            query_error_layout.visibility = View.VISIBLE
+            query_error_text.text = getString(R.string.query_error)
+        } else {
+            query_error_layout.visibility = View.INVISIBLE
+        }
+        hideLoadingBars()
+        showSnackBar(getString(R.string.connection_error))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +62,13 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         initRecycler()
         initSearchView()
         initData()
-        observeData()
+        observeViewModel()
+    }
+
+    private fun observeViewModel() {
+        viewModel.movies.observe(this, moviesObserver)
+        viewModel.foundMovies.observe(this, moviesObserver)
+        viewModel.errorMessage.observe(this, errorsObserver)
     }
 
     private fun initViews() {
@@ -72,16 +88,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private fun initSearchView() {
         val disposable = Observable.create<String> {
             search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    it.onNext(query!!)
+                override fun onQueryTextSubmit(query: String) = false
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    it.onNext(newText)
                     return false
                 }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    it.onNext(newText!!)
-                    return false
-                }
-
             })
         }
             .filter { it.isNotEmpty() }
@@ -102,21 +114,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             viewModel.searchMovies(search_view.query.toString())
         } else {
             viewModel.loadMovies()
-        }
-    }
-
-    private fun observeData() {
-        viewModel.movies.observe(this, moviesObserver)
-        viewModel.foundMovies.observe(this, moviesObserver)
-        viewModel.errorMessage.observe(this) {
-            if (movieAdapter.itemCount == 0) {
-                query_error_layout.visibility = View.VISIBLE
-                query_error_text.text = getString(R.string.query_error)
-            } else {
-                query_error_layout.visibility = View.INVISIBLE
-            }
-            hideLoadingBars()
-            showSnackBar(getString(R.string.connection_error))
         }
     }
 
