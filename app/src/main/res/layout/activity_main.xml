@@ -19,31 +19,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/progress_indicator" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/search_card_view"
+    <SearchView
+        android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/white"
-        app:cardCornerRadius="20dp"
+        android:background="@drawable/shape_search_view"
+        android:closeIcon="@drawable/ic_close"
+        android:iconifiedByDefault="false"
+        android:queryHint="@string/search_hint"
+        android:searchIcon="@drawable/ic_search"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <SearchView
-            android:id="@+id/search_view"
-            style="@style/SearchViewStyle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:closeIcon="@drawable/ic_close"
-            android:iconifiedByDefault="false"
-            android:queryHint="@string/search_hint"
-            android:searchIcon="@drawable/ic_search" />
-
-    </androidx.cardview.widget.CardView>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/progress_indicator"
@@ -53,8 +43,8 @@
         android:layout_marginTop="8dp"
         android:indeterminate="true"
         android:indeterminateTint="@color/blue"
-        android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@+id/search_card_view" />
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/search_view" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
@@ -64,101 +54,17 @@
         android:layout_marginTop="28dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_card_view">
+        app:layout_constraintTop_toBottomOf="@+id/search_view">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_movie"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/search_card_view" />
+            android:layout_height="match_parent" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/not_found_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/swipe_refresh">
+    <include layout="@layout/layout_not_found" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_big_search"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.45"
-            tools:ignore="ContentDescription" />
-
-        <TextView
-            android:id="@+id/not_found_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="34dp"
-            android:layout_marginEnd="60dp"
-            android:textAlignment="center"
-            android:textColor="#B4B4B4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/query_error_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/swipe_refresh">
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_alert_triangle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.45"
-            tools:ignore="ContentDescription" />
-
-        <TextView
-            android:id="@+id/query_error_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="34dp"
-            android:layout_marginEnd="60dp"
-            android:textAlignment="center"
-            android:textColor="#B4B4B4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
-        <ImageButton
-            android:id="@+id/refresh_button"
-            android:layout_width="56dp"
-            android:layout_height="62dp"
-            android:layout_marginBottom="16dp"
-            android:background="@color/background"
-            android:src="@drawable/ic_refresh"
-            app:elevation="6dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="ContentDescription" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <include layout="@layout/layout_query_error" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

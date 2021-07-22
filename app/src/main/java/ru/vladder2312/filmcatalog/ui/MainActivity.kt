@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.layout_not_found.*
+import kotlinx.android.synthetic.main.layout_query_error.*
 import ru.surfstudio.android.easyadapter.EasyAdapter
 import ru.vladder2312.filmcatalog.R
 import ru.vladder2312.filmcatalog.domain.Movie
@@ -72,15 +74,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun initViews() {
-        window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         swipe_refresh.setColorSchemeColors(ContextCompat.getColor(this, R.color.blue))
         swipe_refresh.setOnRefreshListener {
             initData()
             progress_indicator.visibility = View.VISIBLE
         }
-        refresh_button.setOnClickListener {
+        query_refresh_button.setOnClickListener {
             initData()
-            refresh_button.visibility = View.INVISIBLE
+            query_refresh_button.visibility = View.INVISIBLE
             progress_indicator.visibility = View.VISIBLE
         }
     }
@@ -118,7 +119,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun hideLoadingBars() {
-        refresh_button.visibility = View.VISIBLE
+        query_refresh_button.visibility = View.VISIBLE
         progress_indicator.visibility = View.INVISIBLE
         progress_bar.visibility = View.INVISIBLE
         swipe_refresh.isRefreshing = false
