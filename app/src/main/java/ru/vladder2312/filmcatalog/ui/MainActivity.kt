@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Главная активность приложения
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private lateinit var viewModel: MainViewModel
     private val movieAdapter = EasyAdapter()
@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         initViews()
