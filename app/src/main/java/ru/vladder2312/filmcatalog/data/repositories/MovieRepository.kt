@@ -1,6 +1,7 @@
-package ru.vladder2312.filmcatalog.data
+package ru.vladder2312.filmcatalog.data.repositories
 
 import io.reactivex.Single
+import ru.vladder2312.filmcatalog.data.MovieService
 import ru.vladder2312.filmcatalog.domain.Movie
 import javax.inject.Inject
 

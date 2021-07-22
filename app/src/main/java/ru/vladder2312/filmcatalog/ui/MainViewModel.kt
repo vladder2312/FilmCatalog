@@ -2,13 +2,14 @@ package ru.vladder2312.filmcatalog.ui
 
 import android.app.Application
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import ru.vladder2312.filmcatalog.App
-import ru.vladder2312.filmcatalog.data.MovieRepository
+import ru.vladder2312.filmcatalog.data.repositories.MovieRepository
 import ru.vladder2312.filmcatalog.domain.Movie
 import javax.inject.Inject
 
@@ -53,6 +54,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 },
                 {
                     errorMessage.postValue(it.localizedMessage)
+                    Log.d("TAG", it.toString())
                 }
             )
 

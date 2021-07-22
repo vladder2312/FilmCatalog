@@ -1,4 +1,4 @@
-package ru.vladder2312.filmcatalog.data
+package ru.vladder2312.filmcatalog.data.repositories
 
 import android.content.SharedPreferences
 import javax.inject.Inject
