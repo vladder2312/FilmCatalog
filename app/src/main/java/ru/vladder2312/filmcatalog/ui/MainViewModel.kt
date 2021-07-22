@@ -4,12 +4,15 @@ import android.app.Application
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import ru.vladder2312.filmcatalog.App
 import ru.vladder2312.filmcatalog.data.repositories.MovieRepository
+import ru.vladder2312.filmcatalog.data.repositories.SharedPreferencesRepository
 import ru.vladder2312.filmcatalog.domain.Movie
 import javax.inject.Inject
 
@@ -18,59 +21,64 @@ import javax.inject.Inject
  */
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    @Inject lateinit var movieRepository: MovieRepository
-    @Inject lateinit var sharedPreferences: SharedPreferences
-    val movies = MutableLiveData<List<Movie>>()
-    val foundMovies = MutableLiveData<List<Movie>>()
-    val errorMessage = MutableLiveData<String>()
-    lateinit var loadDisposable : Disposable
-    lateinit var searchDisposable : Disposable
+    @Inject
+    lateinit var movieRepository: MovieRepository
+
+    @Inject
+    lateinit var spRepository: SharedPreferencesRepository
+
+    private val disposables = CompositeDisposable()
+    private val _movies = MutableLiveData<List<Movie>>()
+    private val _foundMovies = MutableLiveData<List<Movie>>()
+    private val _errorMessage = MutableLiveData<String>()
+    val movies: LiveData<List<Movie>>
+        get() = _movies
+    val foundMovies: LiveData<List<Movie>>
+        get() = _foundMovies
+    val errorMessage: LiveData<String>
+        get() = _errorMessage
 
     init {
         App.appComponent.inject(this)
     }
 
     fun loadMovies() {
-        loadDisposable = movieRepository.getMovies()
+        disposables.add(movieRepository.getMovies()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    movies.postValue(it)
+                    _movies.postValue(it)
                 },
                 {
-                    errorMessage.postValue(it.localizedMessage)
+                    _errorMessage.postValue(it.localizedMessage)
                 }
             )
+        )
     }
 
     fun searchMovies(text: String) {
-        searchDisposable = movieRepository.searchMovies(text)
+        disposables.add(movieRepository.searchMovies(text)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    foundMovies.postValue(it)
+                    _foundMovies.postValue(it)
                 },
                 {
-                    errorMessage.postValue(it.localizedMessage)
+                    _errorMessage.postValue(it.localizedMessage)
                     Log.d("TAG", it.toString())
                 }
             )
-
+        )
     }
 
     fun saveLikeState(movie: Movie) {
-        if (movie.isFavourite) {
-            sharedPreferences.edit().putBoolean(movie.id.toString(), movie.isFavourite).apply()
-        } else {
-            sharedPreferences.edit().remove(movie.id.toString()).apply()
-        }
+        spRepository.setMovieFavourite(movie.id, movie.isFavourite)
     }
 
     override fun onCleared() {
-        loadDisposable.dispose()
-        searchDisposable.dispose()
+        disposables.dispose()
         super.onCleared()
     }
 }
