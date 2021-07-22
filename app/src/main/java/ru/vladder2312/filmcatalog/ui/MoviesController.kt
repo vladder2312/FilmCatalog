@@ -45,7 +45,7 @@ class MoviesController(
             release.text = movie.releaseDate
             setLikeIcon()
             if (movie.cover != null) {
-                Picasso.get().load(URLConstants.COVERS_ULS + movie.cover).into(image)
+                Picasso.get().load(URLConstants.COVERS_URL + movie.cover).into(image)
             }
         }
 

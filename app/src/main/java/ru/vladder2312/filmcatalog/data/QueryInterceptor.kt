@@ -1,6 +1,5 @@
 package ru.vladder2312.filmcatalog.data
 
-import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.Response
 
