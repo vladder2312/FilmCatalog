@@ -10,16 +10,11 @@ import ru.vladder2312.filmcatalog.data.response.MoviesResponse
  */
 interface MovieService {
 
-    @GET("discover/movie")
-    fun getMovies(
-        @Query("api_key") api_key: String = "6ccd72a2a8fc239b13f209408fc31c33",
-        @Query("language") language: String = "ru-RU"
-    ): Single<MoviesResponse>
+    @GET(URLConstants.GET_MOVIES)
+    fun getMovies(): Single<MoviesResponse>
 
-    @GET("search/movie")
+    @GET(URLConstants.SEARCH_MOVIES)
     fun searchMovies(
-        @Query("query") text: String,
-        @Query("api_key") api_key: String = "6ccd72a2a8fc239b13f209408fc31c33",
-        @Query("language") language: String = "ru-RU"
+        @Query("query") text: String
     ): Single<MoviesResponse>
 }

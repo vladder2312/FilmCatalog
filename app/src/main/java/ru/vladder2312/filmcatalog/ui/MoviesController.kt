@@ -8,6 +8,7 @@ import com.squareup.picasso.Picasso
 import ru.surfstudio.android.easyadapter.controller.BindableItemController
 import ru.surfstudio.android.easyadapter.holder.BindableViewHolder
 import ru.vladder2312.filmcatalog.R
+import ru.vladder2312.filmcatalog.data.URLConstants
 import ru.vladder2312.filmcatalog.domain.Movie
 
 /**
@@ -44,7 +45,7 @@ class MoviesController(
             release.text = movie.releaseDate
             setLikeIcon()
             if (movie.cover != null) {
-                Picasso.get().load("https://image.tmdb.org/t/p/w780" + movie.cover).into(image)
+                Picasso.get().load(URLConstants.COVERS_URL + movie.cover).into(image)
             }
         }
 

@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.layout_not_found.*
+import kotlinx.android.synthetic.main.layout_query_error.*
 import ru.surfstudio.android.easyadapter.EasyAdapter
 import ru.vladder2312.filmcatalog.R
 import ru.vladder2312.filmcatalog.domain.Movie
@@ -20,7 +22,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Главная активность приложения
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private lateinit var viewModel: MainViewModel
     private val movieAdapter = EasyAdapter()
@@ -43,29 +45,43 @@ class MainActivity : AppCompatActivity() {
             not_found_layout.visibility = View.INVISIBLE
         }
     }
+    private val errorsObserver = Observer<String> {
+        if (movieAdapter.itemCount == 0) {
+            query_error_layout.visibility = View.VISIBLE
+            query_error_text.text = getString(R.string.query_error)
+        } else {
+            query_error_layout.visibility = View.INVISIBLE
+        }
+        hideLoadingBars()
+        showSnackBar(getString(R.string.connection_error))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         initViews()
         initRecycler()
         initSearchView()
         initData()
-        observeData()
+        observeViewModel()
+    }
+
+    private fun observeViewModel() {
+        viewModel.movies.observe(this, moviesObserver)
+        viewModel.foundMovies.observe(this, moviesObserver)
+        viewModel.errorMessage.observe(this, errorsObserver)
     }
 
     private fun initViews() {
-        window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         swipe_refresh.setColorSchemeColors(ContextCompat.getColor(this, R.color.blue))
         swipe_refresh.setOnRefreshListener {
             initData()
             progress_indicator.visibility = View.VISIBLE
         }
-        refresh_button.setOnClickListener {
+        query_refresh_button.setOnClickListener {
             initData()
-            refresh_button.visibility = View.INVISIBLE
+            query_refresh_button.visibility = View.INVISIBLE
             progress_indicator.visibility = View.VISIBLE
         }
     }
@@ -73,16 +89,12 @@ class MainActivity : AppCompatActivity() {
     private fun initSearchView() {
         val disposable = Observable.create<String> {
             search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    it.onNext(query!!)
+                override fun onQueryTextSubmit(query: String) = false
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    it.onNext(newText)
                     return false
                 }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    it.onNext(newText!!)
-                    return false
-                }
-
             })
         }
             .filter { it.isNotEmpty() }
@@ -106,23 +118,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeData() {
-        viewModel.movies.observe(this, moviesObserver)
-        viewModel.foundMovies.observe(this, moviesObserver)
-        viewModel.errorMessage.observe(this) {
-            if (movieAdapter.itemCount == 0) {
-                query_error_layout.visibility = View.VISIBLE
-                query_error_text.text = getString(R.string.query_error)
-            } else {
-                query_error_layout.visibility = View.INVISIBLE
-            }
-            hideLoadingBars()
-            showSnackBar(getString(R.string.connection_error))
-        }
-    }
-
     private fun hideLoadingBars() {
-        refresh_button.visibility = View.VISIBLE
+        query_refresh_button.visibility = View.VISIBLE
         progress_indicator.visibility = View.INVISIBLE
         progress_bar.visibility = View.INVISIBLE
         swipe_refresh.isRefreshing = false
