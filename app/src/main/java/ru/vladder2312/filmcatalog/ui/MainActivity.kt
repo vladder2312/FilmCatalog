@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_not_found.*
 import kotlinx.android.synthetic.main.layout_query_error.*
@@ -25,13 +26,14 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private lateinit var viewModel: MainViewModel
+    private val disposables = CompositeDisposable()
     private val movieAdapter = EasyAdapter()
     private val movieController = MoviesController(
         {
             Toast.makeText(this, it.title, Toast.LENGTH_LONG).show()
         },
         {
-            viewModel.saveLikeState(it)
+            viewModel.saveLikeStateInSharedPref(it)
         }
     )
     private val moviesObserver = Observer<List<Movie>> {
@@ -87,7 +89,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun initSearchView() {
-        val disposable = Observable.create<String> {
+        disposables.add(Observable.create<String> {
             search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String) = false
 
@@ -102,6 +104,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             .subscribe {
                 viewModel.searchMovies(it)
             }
+        )
     }
 
     private fun initRecycler() {
@@ -127,5 +130,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private fun showSnackBar(string: String) {
         Snackbar.make(main_view, string, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposables.dispose()
     }
 }

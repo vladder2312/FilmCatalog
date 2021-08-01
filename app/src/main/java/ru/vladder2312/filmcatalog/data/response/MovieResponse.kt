@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import ru.vladder2312.filmcatalog.domain.Movie
 
 /**
- * Класс Фильм, получаемый с API
+ * Модель фильма, получаемего с API
  */
 data class MovieResponse(
     @SerializedName("poster_path") val posterPath: String?,
@@ -22,6 +22,10 @@ data class MovieResponse(
     @SerializedName("video") val video: Boolean,
     @SerializedName("vote_average") val voteAverage: Float
 ) {
+
+    /**
+     * Трансформация в доменную модель
+     */
     fun transform(): Movie {
         return Movie(id, title, overview, releaseDate, posterPath, false)
     }

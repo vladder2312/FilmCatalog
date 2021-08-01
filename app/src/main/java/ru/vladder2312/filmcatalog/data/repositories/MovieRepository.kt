@@ -9,8 +9,7 @@ import javax.inject.Inject
  * Репозиторий фильмов
  */
 class MovieRepository @Inject constructor(
-    private val movieService: MovieService,
-    private val spRepository: SharedPreferencesRepository
+    private val movieService: MovieService
 ) {
 
     /**
@@ -18,18 +17,10 @@ class MovieRepository @Inject constructor(
      *
      * @return список фильмов обёрнутый в Single
      */
-    fun getMovies() : Single<List<Movie>> = movieService.getMovies()
+    fun getMovies(): Single<List<Movie>> = movieService.getMovies()
         .map { movies ->
             movies.results.map { movie ->
                 movie.transform()
-            }
-        }
-        .map { movies ->
-            movies.map { movie ->
-                if (spRepository.isMovieFavourite(movie.id)) {
-                    movie.isFavourite = true
-                }
-                movie
             }
         }
 
@@ -40,18 +31,9 @@ class MovieRepository @Inject constructor(
      * @return список фильмов обёрнутый в обозреваемый Single объект
      */
     fun searchMovies(text: String) = movieService.searchMovies(text)
-        .map {
-            it.results.map { m ->
-                m.transform()
-            }
-        }
         .map { movies ->
-            movies.map { movie ->
-                if (spRepository.isMovieFavourite(movie.id)) {
-                    movie.isFavourite = true
-                }
-                movie
+            movies.results.map { movie ->
+                movie.transform()
             }
         }
-
 }
