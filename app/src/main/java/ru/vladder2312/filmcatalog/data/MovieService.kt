@@ -10,10 +10,10 @@ import ru.vladder2312.filmcatalog.data.response.MoviesResponse
  */
 interface MovieService {
 
-    @GET(URLConstants.GET_MOVIES)
+    @GET(ConstantsAPI.GET_MOVIES)
     fun getMovies(): Single<MoviesResponse>
 
-    @GET(URLConstants.SEARCH_MOVIES)
+    @GET(ConstantsAPI.SEARCH_MOVIES)
     fun searchMovies(
         @Query("query") text: String
     ): Single<MoviesResponse>

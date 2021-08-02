@@ -7,6 +7,7 @@ import io.reactivex.plugins.RxJavaPlugins
 import ru.vladder2312.filmcatalog.di.AppComponent
 import ru.vladder2312.filmcatalog.di.AppModule
 import ru.vladder2312.filmcatalog.di.DaggerAppComponent
+import ru.vladder2312.filmcatalog.di.NetworkModule
 
 /**
  * Класс инициализации приложения
@@ -14,16 +15,19 @@ import ru.vladder2312.filmcatalog.di.DaggerAppComponent
 class App : Application() {
 
     companion object {
-        lateinit var appComponent : AppComponent
+        lateinit var appComponent: AppComponent
     }
 
     override fun onCreate() {
         super.onCreate()
         RxJavaPlugins.setErrorHandler {
-            if(it is UndeliverableException) {
+            if (it is UndeliverableException) {
                 Log.e("RX", "Global error")
             }
         }
-        appComponent = DaggerAppComponent.builder().appModule(AppModule(applicationContext)).build()
+        appComponent = DaggerAppComponent.builder()
+            .appModule(AppModule(applicationContext))
+            .networkModule(NetworkModule())
+            .build()
     }
 }

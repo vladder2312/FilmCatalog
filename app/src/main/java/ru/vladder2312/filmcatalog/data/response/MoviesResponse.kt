@@ -3,7 +3,7 @@ package ru.vladder2312.filmcatalog.data.response
 import com.google.gson.annotations.SerializedName
 
 /**
- * Класс Фильмы, получаемый с API
+ * Модель страницы с фильмами, получаемая с API
  */
 data class MoviesResponse(
     @SerializedName("page") val page: Int,

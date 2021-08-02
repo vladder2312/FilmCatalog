@@ -1,7 +1,7 @@
 package ru.vladder2312.filmcatalog.domain
 
 /**
- * Класс данных о фильме
+ * Доменная модель фильма
  */
 data class Movie(
     val id: Int,

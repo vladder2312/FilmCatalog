@@ -1,14 +1,12 @@
 package ru.vladder2312.filmcatalog.ui
 
 import android.app.Application
-import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import ru.vladder2312.filmcatalog.App
 import ru.vladder2312.filmcatalog.data.repositories.MovieRepository
@@ -47,8 +45,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                {
-                    _movies.postValue(it)
+                { movies ->
+                    setLikeStateFromSharedPref(movies)
+                    _movies.postValue(movies)
                 },
                 {
                     _errorMessage.postValue(it.localizedMessage)
@@ -62,8 +61,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                {
-                    _foundMovies.postValue(it)
+                { movies ->
+                    setLikeStateFromSharedPref(movies)
+                    _movies.postValue(movies)
                 },
                 {
                     _errorMessage.postValue(it.localizedMessage)
@@ -73,8 +73,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
-    fun saveLikeState(movie: Movie) {
+    fun saveLikeStateInSharedPref(movie: Movie) {
         spRepository.setMovieFavourite(movie.id, movie.isFavourite)
+    }
+
+    private fun setLikeStateFromSharedPref(movies: List<Movie>) {
+        movies.forEach { movie ->
+            movie.isFavourite = spRepository.isMovieFavourite(movie.id)
+        }
     }
 
     override fun onCleared() {
