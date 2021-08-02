@@ -2,10 +2,10 @@ package ru.vladder2312.filmcatalog.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -38,20 +38,20 @@ class MainActivity : AppCompatActivity() {
     private val moviesObserver = Observer<List<Movie>> {
         movieAdapter.setData(it, movieController)
         hideLoadingBars()
-        binding.queryErrorLayout.root.visibility = View.INVISIBLE
+        binding.queryErrorLayout.root.isVisible = false
         if (it.isEmpty()) {
-            binding.notFoundLayout.root.visibility = View.VISIBLE
+            binding.notFoundLayout.root.isVisible = true
             binding.notFoundLayout.notFoundText.text = getString(R.string.not_found, binding.searchView.query)
         } else {
-            binding.notFoundLayout.root.visibility = View.INVISIBLE
+            binding.notFoundLayout.root.isVisible = false
         }
     }
     private val errorsObserver = Observer<String> {
         if (movieAdapter.itemCount == 0) {
-            binding.queryErrorLayout.root.visibility = View.VISIBLE
+            binding.queryErrorLayout.root.isVisible = true
             binding.queryErrorLayout.queryErrorText.text = getString(R.string.query_error)
         } else {
-            binding.queryErrorLayout.root.visibility = View.INVISIBLE
+            binding.queryErrorLayout.root.isVisible = false
         }
         hideLoadingBars()
         showSnackBar(getString(R.string.connection_error))
@@ -81,12 +81,12 @@ class MainActivity : AppCompatActivity() {
         binding.swipeRefresh.setColorSchemeColors(ContextCompat.getColor(this, R.color.blue))
         binding.swipeRefresh.setOnRefreshListener {
             initData()
-            binding.progressIndicator.visibility = View.VISIBLE
+            binding.progressIndicator.isVisible = true
         }
         binding.queryErrorLayout.queryRefreshButton.setOnClickListener {
             initData()
-            binding.queryErrorLayout.queryRefreshButton.visibility = View.INVISIBLE
-            binding.progressIndicator.visibility = View.VISIBLE
+            binding.queryErrorLayout.queryRefreshButton.isVisible = false
+            binding.progressIndicator.isVisible = true
         }
     }
 
@@ -124,9 +124,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hideLoadingBars() {
-        binding.queryErrorLayout.queryRefreshButton.visibility = View.VISIBLE
-        binding.progressIndicator.visibility = View.INVISIBLE
-        binding.progressBar.visibility = View.INVISIBLE
+        binding.queryErrorLayout.queryRefreshButton.isVisible = true
+        binding.progressIndicator.isVisible = false
+        binding.progressBar.isVisible = false
         binding.swipeRefresh.isRefreshing = false
     }
 
