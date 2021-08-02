@@ -12,20 +12,19 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.layout_not_found.*
-import kotlinx.android.synthetic.main.layout_query_error.*
 import ru.surfstudio.android.easyadapter.EasyAdapter
 import ru.vladder2312.filmcatalog.R
+import ru.vladder2312.filmcatalog.databinding.ActivityMainBinding
 import ru.vladder2312.filmcatalog.domain.Movie
 import java.util.concurrent.TimeUnit
 
 /**
  * Главная активность приложения
  */
-class MainActivity : AppCompatActivity(R.layout.activity_main) {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
+    private lateinit var binding: ActivityMainBinding
     private val disposables = CompositeDisposable()
     private val movieAdapter = EasyAdapter()
     private val movieController = MoviesController(
@@ -39,20 +38,20 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private val moviesObserver = Observer<List<Movie>> {
         movieAdapter.setData(it, movieController)
         hideLoadingBars()
-        query_error_layout.visibility = View.INVISIBLE
+        binding.queryErrorLayout.root.visibility = View.INVISIBLE
         if (it.isEmpty()) {
-            not_found_layout.visibility = View.VISIBLE
-            not_found_text.text = getString(R.string.not_found, search_view.query)
+            binding.notFoundLayout.root.visibility = View.VISIBLE
+            binding.notFoundLayout.notFoundText.text = getString(R.string.not_found, binding.searchView.query)
         } else {
-            not_found_layout.visibility = View.INVISIBLE
+            binding.notFoundLayout.root.visibility = View.INVISIBLE
         }
     }
     private val errorsObserver = Observer<String> {
         if (movieAdapter.itemCount == 0) {
-            query_error_layout.visibility = View.VISIBLE
-            query_error_text.text = getString(R.string.query_error)
+            binding.queryErrorLayout.root.visibility = View.VISIBLE
+            binding.queryErrorLayout.queryErrorText.text = getString(R.string.query_error)
         } else {
-            query_error_layout.visibility = View.INVISIBLE
+            binding.queryErrorLayout.root.visibility = View.INVISIBLE
         }
         hideLoadingBars()
         showSnackBar(getString(R.string.connection_error))
@@ -61,6 +60,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initViews()
         initRecycler()
@@ -76,21 +77,22 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun initViews() {
-        swipe_refresh.setColorSchemeColors(ContextCompat.getColor(this, R.color.blue))
-        swipe_refresh.setOnRefreshListener {
+        window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+        binding.swipeRefresh.setColorSchemeColors(ContextCompat.getColor(this, R.color.blue))
+        binding.swipeRefresh.setOnRefreshListener {
             initData()
-            progress_indicator.visibility = View.VISIBLE
+            binding.progressIndicator.visibility = View.VISIBLE
         }
-        query_refresh_button.setOnClickListener {
+        binding.queryErrorLayout.queryRefreshButton.setOnClickListener {
             initData()
-            query_refresh_button.visibility = View.INVISIBLE
-            progress_indicator.visibility = View.VISIBLE
+            binding.queryErrorLayout.queryRefreshButton.visibility = View.INVISIBLE
+            binding.progressIndicator.visibility = View.VISIBLE
         }
     }
 
     private fun initSearchView() {
         disposables.add(Observable.create<String> {
-            search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String) = false
 
                 override fun onQueryTextChange(newText: String): Boolean {
@@ -108,28 +110,28 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun initRecycler() {
-        recycler_movie.layoutManager =
+        binding.recyclerMovie.layoutManager =
             StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-        recycler_movie.adapter = movieAdapter
+        binding.recyclerMovie.adapter = movieAdapter
     }
 
     private fun initData() {
-        if (search_view.query.isNotEmpty()) {
-            viewModel.searchMovies(search_view.query.toString())
+        if (binding.searchView.query.isNotEmpty()) {
+            viewModel.searchMovies(binding.searchView.query.toString())
         } else {
             viewModel.loadMovies()
         }
     }
 
     private fun hideLoadingBars() {
-        query_refresh_button.visibility = View.VISIBLE
-        progress_indicator.visibility = View.INVISIBLE
-        progress_bar.visibility = View.INVISIBLE
-        swipe_refresh.isRefreshing = false
+        binding.queryErrorLayout.queryRefreshButton.visibility = View.VISIBLE
+        binding.progressIndicator.visibility = View.INVISIBLE
+        binding.progressBar.visibility = View.INVISIBLE
+        binding.swipeRefresh.isRefreshing = false
     }
 
     private fun showSnackBar(string: String) {
-        Snackbar.make(main_view, string, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.root, string, Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {
