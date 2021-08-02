@@ -6,16 +6,14 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import ru.surfstudio.android.easyadapter.EasyAdapter
 import ru.vladder2312.filmcatalog.R
 import ru.vladder2312.filmcatalog.databinding.ActivityMainBinding
-import ru.vladder2312.filmcatalog.domain.Movie
 import java.util.concurrent.TimeUnit
 
 /**
@@ -35,27 +33,6 @@ class MainActivity : AppCompatActivity() {
             viewModel.saveLikeStateInSharedPref(it)
         }
     )
-    private val moviesObserver = Observer<List<Movie>> {
-        movieAdapter.setData(it, movieController)
-        hideLoadingBars()
-        binding.queryErrorLayout.root.isVisible = false
-        if (it.isEmpty()) {
-            binding.notFoundLayout.root.isVisible = true
-            binding.notFoundLayout.notFoundText.text = getString(R.string.not_found, binding.searchView.query)
-        } else {
-            binding.notFoundLayout.root.isVisible = false
-        }
-    }
-    private val errorsObserver = Observer<String> {
-        if (movieAdapter.itemCount == 0) {
-            binding.queryErrorLayout.root.isVisible = true
-            binding.queryErrorLayout.queryErrorText.text = getString(R.string.query_error)
-        } else {
-            binding.queryErrorLayout.root.isVisible = false
-        }
-        hideLoadingBars()
-        showSnackBar(getString(R.string.connection_error))
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,25 +43,47 @@ class MainActivity : AppCompatActivity() {
         initViews()
         initRecycler()
         initSearchView()
-        initData()
         observeViewModel()
     }
 
     private fun observeViewModel() {
-        viewModel.movies.observe(this, moviesObserver)
-        viewModel.foundMovies.observe(this, moviesObserver)
-        viewModel.errorMessage.observe(this, errorsObserver)
+        viewModel.state.observe(this) { state ->
+            binding.queryErrorLayout.root.isVisible = false
+            binding.notFoundLayout.root.isVisible = false
+            setLoadingBarsVisibility(false)
+            when (state) {
+                is MainViewState.MoviesViewState -> movieAdapter.setData(state.movies, movieController)
+
+                MainViewState.LoadingViewState -> setLoadingBarsVisibility(true)
+
+                MainViewState.NotFoundViewState -> {
+                    binding.notFoundLayout.notFoundText.text =
+                        getString(R.string.not_found, binding.searchView.query)
+                    binding.notFoundLayout.root.isVisible = true
+                }
+
+                MainViewState.QueryErrorViewState -> {
+                    if (movieAdapter.itemCount == 0) {
+                        binding.queryErrorLayout.root.isVisible = true
+                        binding.queryErrorLayout.queryErrorText.text =
+                            getString(R.string.query_error)
+                    } else {
+                        showSnackBar(getString(R.string.connection_error))
+                    }
+                }
+            }
+        }
     }
 
     private fun initViews() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         binding.swipeRefresh.setColorSchemeColors(ContextCompat.getColor(this, R.color.blue))
         binding.swipeRefresh.setOnRefreshListener {
-            initData()
+            loadData()
             binding.progressIndicator.isVisible = true
         }
         binding.queryErrorLayout.queryRefreshButton.setOnClickListener {
-            initData()
+            loadData()
             binding.queryErrorLayout.queryRefreshButton.isVisible = false
             binding.progressIndicator.isVisible = true
         }
@@ -110,12 +109,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initRecycler() {
-        binding.recyclerMovie.layoutManager =
-            StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+        binding.recyclerMovie.layoutManager = LinearLayoutManager(this)
         binding.recyclerMovie.adapter = movieAdapter
     }
 
-    private fun initData() {
+    private fun loadData() {
         if (binding.searchView.query.isNotEmpty()) {
             viewModel.searchMovies(binding.searchView.query.toString())
         } else {
@@ -123,11 +121,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun hideLoadingBars() {
-        binding.queryErrorLayout.queryRefreshButton.isVisible = true
-        binding.progressIndicator.isVisible = false
-        binding.progressBar.isVisible = false
-        binding.swipeRefresh.isRefreshing = false
+    private fun setLoadingBarsVisibility(visible: Boolean) {
+        binding.queryErrorLayout.queryRefreshButton.isVisible = !visible
+        binding.progressIndicator.isVisible = visible
+        binding.progressBar.isVisible = visible
+        binding.swipeRefresh.isRefreshing = visible
     }
 
     private fun showSnackBar(string: String) {

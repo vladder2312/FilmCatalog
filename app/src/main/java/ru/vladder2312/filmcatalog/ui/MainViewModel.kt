@@ -26,31 +26,34 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     lateinit var spRepository: SharedPreferencesRepository
 
     private val disposables = CompositeDisposable()
-    private val _movies = MutableLiveData<List<Movie>>()
-    private val _foundMovies = MutableLiveData<List<Movie>>()
-    private val _errorMessage = MutableLiveData<String>()
-    val movies: LiveData<List<Movie>>
-        get() = _movies
-    val foundMovies: LiveData<List<Movie>>
-        get() = _foundMovies
-    val errorMessage: LiveData<String>
-        get() = _errorMessage
+    private val _state = MutableLiveData<MainViewState>()
+    val state: LiveData<MainViewState>
+        get() = _state
 
     init {
         App.appComponent.inject(this)
+        loadMovies()
+    }
+
+    override fun onCleared() {
+        disposables.dispose()
+        super.onCleared()
+    }
+
+    fun saveLikeStateInSharedPref(movie: Movie) {
+        spRepository.setMovieFavourite(movie.id, movie.isFavourite)
     }
 
     fun loadMovies() {
         disposables.add(movieRepository.getMovies()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { onLoading() }
             .subscribe(
-                { movies ->
-                    setLikeStateFromSharedPref(movies)
-                    _movies.postValue(movies)
-                },
+                { movies -> onSuccess(movies) },
                 {
-                    _errorMessage.postValue(it.localizedMessage)
+                    onError()
+                    Log.e("TAG", it.toString())
                 }
             )
         )
@@ -60,31 +63,37 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         disposables.add(movieRepository.searchMovies(text)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { onLoading() }
             .subscribe(
-                { movies ->
-                    setLikeStateFromSharedPref(movies)
-                    _movies.postValue(movies)
-                },
+                { movies -> onSuccess(movies) },
                 {
-                    _errorMessage.postValue(it.localizedMessage)
-                    Log.d("TAG", it.toString())
+                    onError()
+                    Log.e("TAG", it.toString())
                 }
             )
         )
     }
 
-    fun saveLikeStateInSharedPref(movie: Movie) {
-        spRepository.setMovieFavourite(movie.id, movie.isFavourite)
+    private fun onLoading() {
+        _state.postValue(MainViewState.LoadingViewState)
+    }
+
+    private fun onSuccess(movies: List<Movie>) {
+        if (movies.isNotEmpty()) {
+            setLikeStateFromSharedPref(movies)
+            _state.postValue(MainViewState.MoviesViewState(movies))
+        } else {
+            _state.postValue(MainViewState.NotFoundViewState)
+        }
+    }
+
+    private fun onError() {
+        _state.postValue(MainViewState.QueryErrorViewState)
     }
 
     private fun setLikeStateFromSharedPref(movies: List<Movie>) {
         movies.forEach { movie ->
             movie.isFavourite = spRepository.isMovieFavourite(movie.id)
         }
-    }
-
-    override fun onCleared() {
-        disposables.dispose()
-        super.onCleared()
     }
 }
